@@ -28,57 +28,27 @@ from tensorflow.keras import layers
 from tensorflow.keras import Model
 from os import getcwd
 
-# GRADED FUNCTION: train_val_datasets
-
-def train_val_datasets():
-    """Creates training and validation datasets
-
-    Returns:
-        (tf.data.Dataset, tf.data.Dataset): training and validation datasets
-    """
-
-    ### START CODE HERE ###
-
-    training_dataset = tf.keras.utils.image_dataset_from_directory( 
-        directory='/content/horse-or-human.zip/',
-        batch_size=32,
-        image_size=(150,150),
-        shuffle=True, 
-        seed=7 
-    ) 
-    
-    validation_dataset = tf.keras.utils.image_dataset_from_directory( 
-        directory='/content/validation-horse-or-human.zip',
-        batch_size=32,
-        image_size=(150,150),
-        shuffle=True, 
-        seed=7 
-    ) 
-
-    ### END CODE HERE ###
-                                                                        
-    return training_dataset, validation_dataset
-
-path_inception = '/content/inception_v3_weights_tf_dim_ordering_tf_kernels_notop (1).h5'
+path_inception = '/content/inception_v3_weights_tf_dim_ordering_tf_kernels_notop.h5'
 
 # Import the inception model
 from tensorflow.keras.applications.inception_v3 import InceptionV3
 
 # Create an instance of the inception model from the local pre-trained weights
-local_weights_file ='/content/inception_v3_weights_tf_dim_ordering_tf_kernels_notop (1).h5'
+local_weights_file = path_inception
+
 pre_trained_model = InceptionV3(include_top = False,
                                 input_shape = (150, 150, 3),
-                                weights = None)
+                                weights = 'imagenet')
 
 pre_trained_model.load_weights(local_weights_file)
 
 # Make all the layers in the pre-trained model non-trainable
 for layer in pre_trained_model.layers:
-    layers.trainable = False
+  layer.trainable=False
 
-pre_trained_model.summary()
+# Print the model summary
 # Write Your Code
-print('Name: SHARMITHA V    Register Number: 212223110048')
+print('Name:SHARMITHA V Register Number:212223110048')
 
 last_layer = pre_trained_model.get_layer('mixed7')
 print('last layer output shape: ', last_layer.output.shape)
@@ -87,67 +57,27 @@ last_output = last_layer.output
 # Expected Output:
 # ('last layer output shape: ', (None, 7, 7, 768))
 
-# Define a Callback class that stops training once accuracy reaches 99.9%
-class EarlyStoppingCallback(tf.keras.callbacks.Callback):
-    def on_epoch_end(self, epoch, logs=None):
-        if logs['accuracy']>0.970:
-            self.model.stop_training = True
-            print("\nReached 97.0% accuracy so cancelling training!")
+# Define a Callback class that stops training once accuracy reaches 97.0%
+# Write your code here
+class my_callback(tf.keras.callbacks.Callback):
+  def on_epoch_end(self,model,logs=None):
+    if(logs.get('accuracy')>0.97):
+      self.model.stop_training=True
 
-# GRADED FUNCTION: output_of_last_layer
+x = tf.keras.layers.Flatten()(last_output)
+x = tf.keras.layers.Dense(1024, activation='relu')(x)
+x = tf.keras.layers.Dropout(0.2)(x)
+x = tf.keras.layers.Dense(1, activation='sigmoid')(x)
+model = tf.keras.Model(inputs=pre_trained_model.input, outputs=x)
 
-def output_of_last_layer(pre_trained_model):
-    """Fetches the output of the last desired layer of the pre-trained model
+model.compile( 
+    optimizer=tf.keras.optimizers.RMSprop(learning_rate=0.00001), 
+    loss='binary_crossentropy', 
+    metrics=['accuracy'] 
+)
 
-    Args:
-        pre_trained_model (tf.keras.Model): pre-trained model
-
-    Returns:
-        tf.keras.KerasTensor: last desired layer of pretrained model
-    """
-    ### START CODE HERE ###
-
-    last_desired_layer = pre_trained_model.get_layer('mixed7')
-    last_output = last_desired_layer.output
-    
-    print('last layer output shape: ', last_output.shape)
-    
-    ### END CODE HERE ###
-
-    return last_output
-
-# Import all the necessary files!
-import os
-import tensorflow as tf
-from tensorflow.keras import layers
-from tensorflow.keras import Model
-from os import getcwd
-from tensorflow.keras.optimizers import RMSprop
-def create_final_model(pre_trained_model, last_output):
-
- # Flatten the output layer of the pretrained model to 1 dimension
-    x = tf.keras.layers.Flatten()(last_output)
-
-    ### START CODE HERE ###
-
-    # Add a fully connected layer with 1024 hidden units and ReLU activation
-    x = tf.keras.layers.Dense(1024, activation='relu')(x)
-    # Add a dropout rate of 0.2
-    x = tf.keras.layers.Dropout(0.2)(x) 
-    # Add a final sigmoid layer for classification
-    x = tf.keras.layers.Dense(1, activation='sigmoid')(x)
-    model = Model(inputs=pre_trained_model.input, outputs=x)
- # Compile the model
-    model.compile( 
-        optimizer=tf.keras.optimizers.RMSprop(learning_rate=0.00001), 
-        loss='binary_crossentropy', # use a loss for binary classification
-        metrics=['accuracy'] 
-    )
-
-    ### END CODE HERE ###
-    return model
-
-model = create_final_model(pre_trained_model, last_output)
+print('Name:SHARMITHA V Register Number:212223110048')
+model.summary()
 
 # Get the Horse or Human dataset
 path_horse_or_human = '/content/horse-or-human.zip'
@@ -168,9 +98,6 @@ zip_ref = zipfile.ZipFile(local_zip, 'r')
 zip_ref.extractall('/tmp/validation')
 zip_ref.close()
 
-model.summary()
-print("Name: SHARMITHA V  Reg No: 212223110048")
-
 # Define our example directories and files
 train_dir = '/tmp/training'
 validation_dir = '/tmp/validation'
@@ -189,12 +116,6 @@ print(len(train_horses_fnames))
 print(len(train_humans_fnames))
 print(len(validation_horses_fnames))
 print(len(validation_humans_fnames))
-
-# Expected Output:
-# 500
-# 527
-# 128
-# 128
 
 # Add our data-augmentation parameters to ImageDataGenerator
 train_datagen = ImageDataGenerator(rescale = 1/255,
@@ -229,15 +150,12 @@ validation_generator =  test_datagen.flow_from_directory(validation_dir,
 # Found 1027 images belonging to 2 classes.
 # Found 256 images belonging to 2 classes.
 
-# Run this and see how many epochs it should take before the callback
-# fires, and stops training at 97% accuracy
-
-callbacks = EarlyStoppingCallback()
-history = model.fit(train_generator,
+history = model.fit(
+    train_generator,
     validation_data = validation_generator,
     epochs = 100,
     verbose = 2,
-    callbacks = [EarlyStoppingCallback()],
+    callbacks = [my_callback()],
 )
 
 %matplotlib inline
@@ -251,13 +169,13 @@ epochs = range(len(acc))
 
 plt.plot(epochs, acc, 'r', label='Training accuracy')
 plt.plot(epochs, val_acc, 'b', label='Validation accuracy')
-plt.title('Name: SHARMITHA V      Register Number: 212223110048    ')
+plt.title('Name:SHARMITHA V Register Number:212223110048')
 plt.title('Training and validation accuracy')
 plt.legend(loc=0)
 plt.figure()
 plt.plot(epochs, loss, 'r', label='Training loss')
 plt.plot(epochs, val_loss, 'b', label='Validation Loss')
-plt.title('Name: SHARMITHA V     Register Number: 212223110048   ')
+plt.title('Name:SHARMITHA V Register Number:212223110048')
 plt.title('Training and validation Loss')
 plt.legend(loc=0)
 plt.figure()
@@ -284,7 +202,9 @@ plt.show()
 ### Conclusion
 
 ![image](https://github.com/user-attachments/assets/5b13e4be-e895-4bdd-9623-99e714555f60)
-
+```
+The transfer learning model with InceptionV3 successfully classifies horse and human images, achieving high accuracy through effective data augmentation. This approach demonstrates strong generalization, making it suitable for practical applications in image classification.
+```
 
 </br>
 </br>
