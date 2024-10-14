@@ -202,9 +202,7 @@ plt.show()
 ### Conclusion
 
 ![image](https://github.com/user-attachments/assets/5b13e4be-e895-4bdd-9623-99e714555f60)
-```
-The transfer learning model with InceptionV3 successfully classifies horse and human images, achieving high accuracy through effective data augmentation. This approach demonstrates strong generalization, making it suitable for practical applications in image classification.
-```
+
 
 </br>
 </br>
