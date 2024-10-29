@@ -191,13 +191,13 @@ plt.show()
 
 ## OUTPUT
 ### Training Accuracy, Validation Accuracy Vs Iteration Plot
-![image](https://github.com/user-attachments/assets/2e15e86e-96ef-4ac9-b7a0-73f14983adda)
+![image](https://github.com/user-attachments/assets/a3ca980c-86e8-46d2-bd83-3bb0193066f5)
 </br>
 </br>
 </br>
 
 ### Training Loss, Validation Loss Vs Iteration Plot
-![image](https://github.com/user-attachments/assets/84f6eabc-8989-40e6-8951-66c232f3c2d2)
+![image](https://github.com/user-attachments/assets/ce0c0944-41c5-43e3-b153-4d26ab1ba932)
 
 </br>
 </br>
@@ -205,8 +205,7 @@ plt.show()
 
 ### Conclusion
 
-![image](https://github.com/user-attachments/assets/5b13e4be-e895-4bdd-9623-99e714555f60)
-
+The transfer learning model with InceptionV3 successfully classifies horse and human images, achieving high accuracy through effective data augmentation. This approach demonstrates strong generalization, making it suitable for practical applications in image classification.
 
 </br>
 </br>
