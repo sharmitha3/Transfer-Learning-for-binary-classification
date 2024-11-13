@@ -2,14 +2,10 @@
 ## Aim
 To Implement Transfer Learning for Horses_vs_humans dataset classification using InceptionV3 architecture.
 ## Problem Statement and Dataset
-```
 The objective of this project is to classify images from the Horses vs. Humans dataset using the InceptionV3 architecture through transfer learning. This dataset presents a binary classification challenge, distinguishing between images of horses and humans. By leveraging pre-trained weights from the InceptionV3 model, we aim to enhance classification accuracy and reduce training time. The project will evaluate the model's performance based on metrics such as accuracy, precision, and recall. Ultimately, the goal is to demonstrate the effectiveness of transfer learning in image classification tasks.
-```
+
 ![image](https://github.com/user-attachments/assets/f3725654-58ac-48d1-a3a9-03ac1b4993b3)
 
-</br>
-</br>
-</br>
 
 ## DESIGN STEPS
 ### STEP 1:
@@ -209,9 +205,8 @@ plt.show()
 </br>
 
 ### Conclusion
-```
 The transfer learning model with InceptionV3 successfully classifies horse and human images, achieving high accuracy through effective data augmentation. This approach demonstrates strong generalization, making it suitable for practical applications in image classification.
-```
+
 </br>
 </br>
 </br>
